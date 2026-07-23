@@ -343,7 +343,7 @@
     <p>Gratulerer med dagen, Mathilde! 13 år allerede – snart tar du helt av! Håper du får en toppdag med alt du liker aller best. Klem fra onkel Eie!</p>
   </div>
 
-  <p class="bunn">Laget med 💜 til bursdagsjenta</p>
+  <p class="bunn">Laget med 💜 til bursdagsjenta · versjon 3 🎵</p>
 </div>
 
 <script>
@@ -469,6 +469,8 @@
     var Ctx = window.AudioContext || window.webkitAudioContext;
     if (!Ctx) return;
     lydKontekst = new Ctx();
+    // Safari/iPhone starter lydmotoren i pauset tilstand selv ved klikk
+    if (lydKontekst.state === 'suspended') lydKontekst.resume();
     var taktslag = 0.42; // sekunder per slag
     var tid = lydKontekst.currentTime + 0.1;
     melodi.forEach(function (tone) {
