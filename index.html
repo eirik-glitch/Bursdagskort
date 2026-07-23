@@ -239,6 +239,16 @@
     outline-offset: 4px;
   }
 
+  .lyd-status {
+    margin: -1.6rem auto 2.4rem;
+    max-width: 420px;
+    font-size: 0.95rem;
+    color: var(--gul);
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 12px;
+    padding: 0.6rem 1rem;
+  }
+
   /* ---------- Hilsener ---------- */
   .hilsen-tittel {
     font-size: 1.8rem;
@@ -320,6 +330,7 @@
     <button type="button" class="fest-knapp" id="festKnapp">🎊 MER KONFETTI!</button>
     <button type="button" class="fest-knapp musikk" id="musikkKnapp">🎵 Spill bursdagssang!</button>
   </div>
+  <p class="lyd-status" id="lydStatus" hidden></p>
 
   <h2 class="hilsen-tittel">💌 Hilsener til deg</h2>
 
@@ -343,7 +354,7 @@
     <p>Gratulerer med dagen, Mathilde! 13 år allerede – snart tar du helt av! Håper du får en toppdag med alt du liker aller best. Klem fra onkel Eie!</p>
   </div>
 
-  <p class="bunn">Laget med 💜 til bursdagsjenta · versjon 3 🎵</p>
+  <p class="bunn">Laget med 💜 til bursdagsjenta · versjon 4 🎵</p>
 </div>
 
 <script>
@@ -437,11 +448,19 @@
     [F5, 0.75], [F5, 0.25], [E5, 1], [C5, 1], [D5, 1], [C5, 2.5]
   ];
 
+  var aktiveOscillatorer = [];
+  var lydStatus = document.getElementById('lydStatus');
+
+  function visLydStatus(tekst) {
+    lydStatus.textContent = tekst;
+    lydStatus.hidden = !tekst;
+  }
+
   function spillTone(ctx, frekvens, start, lengde) {
     // Myk hovedtone + en svak oktav over gir en klokkeaktig festlyd
     var stemmer = [
-      { type: 'triangle', freq: frekvens, styrke: 0.28 },
-      { type: 'sine', freq: frekvens * 2, styrke: 0.07 }
+      { type: 'triangle', freq: frekvens, styrke: 0.3 },
+      { type: 'sine', freq: frekvens * 2, styrke: 0.08 }
     ];
     stemmer.forEach(function (st) {
       var osc = ctx.createOscillator();
@@ -455,34 +474,70 @@
       gain.connect(ctx.destination);
       osc.start(start);
       osc.stop(start + lengde);
+      aktiveOscillatorer.push(osc);
     });
   }
 
   function stoppMusikk() {
     spiller = false;
     if (sangSluttTimer) { clearTimeout(sangSluttTimer); sangSluttTimer = null; }
-    if (lydKontekst) { lydKontekst.close(); lydKontekst = null; }
+    aktiveOscillatorer.forEach(function (osc) {
+      try { osc.stop(); } catch (e) { /* allerede stoppet */ }
+    });
+    aktiveOscillatorer = [];
     musikkKnapp.textContent = '🎵 Spill bursdagssang!';
+  }
+
+  function startSpilling(ctx) {
+    var taktslag = 0.42; // sekunder per slag
+    var tid = ctx.currentTime + 0.15;
+    melodi.forEach(function (tone) {
+      var lengde = tone[1] * taktslag;
+      spillTone(ctx, tone[0], tid, lengde);
+      tid += lengde;
+    });
+    spiller = true;
+    visLydStatus('');
+    musikkKnapp.textContent = '🔇 Stopp musikken';
+    slippKonfetti(60);
+    var totalMs = (tid - ctx.currentTime + 0.3) * 1000;
+    sangSluttTimer = setTimeout(stoppMusikk, totalMs);
   }
 
   function spillMusikk() {
     var Ctx = window.AudioContext || window.webkitAudioContext;
-    if (!Ctx) return;
-    lydKontekst = new Ctx();
-    // Safari/iPhone starter lydmotoren i pauset tilstand selv ved klikk
-    if (lydKontekst.state === 'suspended') lydKontekst.resume();
-    var taktslag = 0.42; // sekunder per slag
-    var tid = lydKontekst.currentTime + 0.1;
-    melodi.forEach(function (tone) {
-      var lengde = tone[1] * taktslag;
-      spillTone(lydKontekst, tone[0], tid, lengde);
-      tid += lengde;
-    });
-    spiller = true;
-    musikkKnapp.textContent = '🔇 Stopp musikken';
-    slippKonfetti(60);
-    var totalMs = (tid - lydKontekst.currentTime + 0.3) * 1000;
-    sangSluttTimer = setTimeout(stoppMusikk, totalMs);
+    if (!Ctx) {
+      visLydStatus('⚠️ Nettleseren din støtter dessverre ikke lyd (Web Audio).');
+      return;
+    }
+    // Én gjenbrukbar lydmotor – iPhone liker ikke at det lages mange
+    if (!lydKontekst) lydKontekst = new Ctx();
+    var ctx = lydKontekst;
+
+    // iOS-opplåsing: en bitteliten stille lyd inne i selve klikket
+    try {
+      var stille = ctx.createBufferSource();
+      stille.buffer = ctx.createBuffer(1, 1, 22050);
+      stille.connect(ctx.destination);
+      stille.start(0);
+    } catch (e) { /* uskadelig om det feiler */ }
+
+    if (ctx.state === 'running') {
+      startSpilling(ctx);
+    } else {
+      // Safari/iPhone starter i pauset tilstand: vent til motoren
+      // faktisk kjører før tonene planlegges
+      ctx.resume().then(function () { startSpilling(ctx); })
+        .catch(function () {
+          visLydStatus('⚠️ Nettleseren blokkerte lyden. Prøv å trykke en gang til.');
+        });
+      setTimeout(function () {
+        if (!spiller && ctx.state !== 'running') {
+          visLydStatus('⚠️ Fikk ikke startet lyden (tilstand: ' + ctx.state +
+            '). Sjekk at telefonen ikke står på lydløs, og prøv igjen.');
+        }
+      }, 600);
+    }
   }
 
   musikkKnapp.addEventListener('click', function () {
