@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gratulerer med dagen, Mathilde! 🎉</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --rosa: #ff6fa5;
+    --lilla: #a86fff;
+    --gul: #ffd166;
+    --turkis: #4ecdc4;
+  }
+
+  html, body {
+    height: 100%;
+    font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    overflow-x: hidden;
+  }
+
+  body {
+    background: linear-gradient(160deg, #2b1055 0%, #7597de 100%);
+    color: #fff;
+  }
+
+  /* ---------- Stjernehimmel ---------- */
+  .stjerne {
+    position: fixed;
+    border-radius: 50%;
+    background: #fff;
+    opacity: 0.8;
+    animation: blink 2.5s infinite ease-in-out;
+    z-index: 0;
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 0.2; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.2); }
+  }
+
+  /* ---------- Ballonger ---------- */
+  .ballong {
+    position: fixed;
+    bottom: -140px;
+    font-size: 3rem;
+    animation: sveve linear infinite;
+    z-index: 1;
+    pointer-events: none;
+  }
+  @keyframes sveve {
+    0%   { transform: translateY(0) rotate(-4deg); }
+    50%  { transform: translateY(-55vh) rotate(5deg); }
+    100% { transform: translateY(-115vh) rotate(-4deg); }
+  }
+
+  /* ---------- Konfetti ---------- */
+  .konfetti {
+    position: fixed;
+    top: -20px;
+    width: 12px;
+    height: 12px;
+    z-index: 2;
+    pointer-events: none;
+    animation: fall linear forwards;
+  }
+  @keyframes fall {
+    to { transform: translateY(110vh) rotate(720deg); }
+  }
+
+  /* ---------- Hovedinnhold ---------- */
+  .innhold {
+    position: relative;
+    z-index: 3;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 3rem 1.2rem 4rem;
+    text-align: center;
+  }
+
+  .tittel {
+    font-size: clamp(2.2rem, 8vw, 4.2rem);
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 0.5rem;
+  }
+  .tittel span {
+    display: inline-block;
+    animation: hopp 1.6s ease-in-out infinite;
+    background: linear-gradient(90deg, var(--gul), var(--rosa), var(--lilla), var(--turkis));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  @keyframes hopp {
+    0%, 100% { transform: translateY(0); }
+    30% { transform: translateY(-14px) rotate(-3deg); }
+    60% { transform: translateY(0); }
+  }
+
+  .navn {
+    font-size: clamp(3rem, 12vw, 6rem);
+    font-weight: 900;
+    letter-spacing: 2px;
+    background: linear-gradient(90deg, var(--rosa), var(--gul), var(--turkis), var(--lilla), var(--rosa));
+    background-size: 300% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: skinn 4s linear infinite;
+    margin-bottom: 0.3rem;
+  }
+  @keyframes skinn {
+    to { background-position: 300% center; }
+  }
+
+  .tretten {
+    font-size: clamp(1.2rem, 4vw, 1.6rem);
+    color: #ffe9f3;
+    margin-bottom: 2.5rem;
+  }
+  .tretten strong {
+    color: var(--gul);
+    font-size: 1.4em;
+  }
+
+  /* ---------- Kake ---------- */
+  .kake-boks {
+    margin: 1rem auto 0.8rem;
+    width: 260px;
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+    transition: transform 0.2s;
+  }
+  .kake-boks:hover { transform: scale(1.04); }
+
+  .kake { font-size: 7rem; line-height: 1; }
+
+  .lys {
+    position: absolute;
+    top: -34px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 14px;
+  }
+  .flamme {
+    width: 14px;
+    height: 20px;
+    background: radial-gradient(circle at 50% 30%, #fff6b7, #ffb03a 60%, #ff6a00);
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    animation: flakke 0.35s infinite alternate;
+    transform-origin: bottom center;
+  }
+  .flamme::after {
+    content: "";
+    display: block;
+    width: 4px;
+    height: 10px;
+    background: #d9c9a3;
+    margin: 20px auto 0;
+    border-radius: 2px;
+  }
+  @keyframes flakke {
+    from { transform: scale(1) rotate(-4deg); }
+    to   { transform: scale(1.15) rotate(4deg); }
+  }
+  .flamme.slukket {
+    background: none;
+    animation: none;
+  }
+  .flamme.slukket::before {
+    content: "💨";
+    font-size: 14px;
+    display: block;
+    margin-top: -6px;
+  }
+
+  .kake-hint {
+    font-size: 1rem;
+    color: #cfd8ff;
+    margin-bottom: 2.5rem;
+    animation: pulser 2s infinite;
+  }
+  @keyframes pulser {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+  }
+
+  .onske {
+    display: none;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--gul);
+    margin-bottom: 2.5rem;
+    animation: poppInn 0.6s ease both;
+  }
+
+  /* ---------- Hilsener ---------- */
+  .hilsen-tittel {
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin: 1.5rem 0 1.2rem;
+  }
+
+  .kort {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 18px;
+    padding: 1.4rem 1.5rem;
+    margin-bottom: 1.1rem;
+    text-align: left;
+    opacity: 0;
+    transform: translateY(35px);
+    transition: opacity 0.7s ease, transform 0.7s ease, scale 0.2s;
+  }
+  .kort.synlig {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .kort:hover { scale: 1.02; }
+
+  .kort .fra {
+    font-weight: 800;
+    font-size: 1.15rem;
+    margin-bottom: 0.35rem;
+  }
+  .kort:nth-of-type(1) .fra { color: var(--turkis); }
+  .kort:nth-of-type(2) .fra { color: var(--gul); }
+  .kort:nth-of-type(3) .fra { color: var(--rosa); }
+  .kort:nth-of-type(4) .fra { color: #c9a7ff; }
+
+  .kort p { color: #f0ecff; line-height: 1.55; }
+
+  /* ---------- Konfetti-knapp ---------- */
+  .fest-knapp {
+    margin-top: 2rem;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #2b1055;
+    background: linear-gradient(90deg, var(--gul), var(--rosa));
+    border: none;
+    border-radius: 999px;
+    padding: 0.9rem 2.2rem;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(255, 111, 165, 0.45);
+    transition: transform 0.15s;
+  }
+  .fest-knapp:hover { transform: scale(1.07); }
+  .fest-knapp:active { transform: scale(0.95); }
+
+  @keyframes poppInn {
+    from { opacity: 0; transform: scale(0.5); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  .bunn {
+    margin-top: 3rem;
+    font-size: 0.95rem;
+    color: #b9c4f0;
+  }
+</style>
+</head>
+<body>
+
+<div class="innhold">
+  <h1 class="tittel">
+    <span style="animation-delay:0s">🎉</span>
+    Gratulerer med dagen
+    <span style="animation-delay:0.3s">🎂</span>
+  </h1>
+  <div class="navn">MATHILDE!</div>
+  <p class="tretten">Du er <strong>13 år</strong> i dag – offisielt tenåring! 🥳</p>
+
+  <div class="kake-boks" id="kake" title="Blås ut lysene!">
+    <div class="lys" id="lys">
+      <div class="flamme"></div>
+      <div class="flamme" style="animation-delay:0.1s"></div>
+      <div class="flamme" style="animation-delay:0.2s"></div>
+    </div>
+    <div class="kake">🎂</div>
+  </div>
+  <p class="kake-hint" id="kakeHint">👆 Trykk på kaken for å blåse ut lysene!</p>
+  <p class="onske" id="onske">✨ Lysene er blåst ut – ønsk deg noe fint! ✨</p>
+
+  <h2 class="hilsen-tittel">💌 Hilsener til deg</h2>
+
+  <div class="kort">
+    <div class="fra">Fra Jacob 🎮</div>
+    <p>Gratulerer så mye med 13-årsdagen, Mathilde! Håper du får en superkul dag med masse kake og gaver. Du er best!</p>
+  </div>
+
+  <div class="kort">
+    <div class="fra">Fra Magnus ⚽</div>
+    <p>Hurra for deg, Mathilde! 13 år – nå er du offisielt tenåring! Håper dagen din blir helt fantastisk. Gratulerer med dagen!</p>
+  </div>
+
+  <div class="kort">
+    <div class="fra">Fra Tante Chrissi 💖</div>
+    <p>Kjære Mathilde! Gratulerer så masse med dagen, fine jenta vår. Tenk at du allerede er 13 år – tiden flyr! Vi er så stolte av deg. Stor bursdagsklem fra tante!</p>
+  </div>
+
+  <div class="kort">
+    <div class="fra">Fra Onkel Eie 🎸</div>
+    <p>Gratulerer med dagen, Mathilde! 13 år allerede – snart tar du helt av! Håper du får en toppdag med alt du liker aller best. Klem fra onkel Eie!</p>
+  </div>
+
+  <button class="fest-knapp" id="festKnapp">🎊 MER KONFETTI! 🎊</button>
+
+  <p class="bunn">Laget med 💜 til bursdagsjenta</p>
+</div>
+
+<script>
+  // ---------- Stjerner ----------
+  for (let i = 0; i < 40; i++) {
+    const s = document.createElement('div');
+    s.className = 'stjerne';
+    const str = 1 + Math.random() * 3;
+    s.style.width = s.style.height = str + 'px';
+    s.style.left = Math.random() * 100 + 'vw';
+    s.style.top = Math.random() * 100 + 'vh';
+    s.style.animationDelay = Math.random() * 2.5 + 's';
+    document.body.appendChild(s);
+  }
+
+  // ---------- Ballonger ----------
+  const ballongTyper = ['🎈', '🎈', '💜', '💗', '⭐'];
+  for (let i = 0; i < 9; i++) {
+    const b = document.createElement('div');
+    b.className = 'ballong';
+    b.textContent = ballongTyper[i % ballongTyper.length];
+    b.style.left = (5 + Math.random() * 90) + 'vw';
+    b.style.animationDuration = (9 + Math.random() * 8) + 's';
+    b.style.animationDelay = Math.random() * 9 + 's';
+    b.style.fontSize = (2 + Math.random() * 2.2) + 'rem';
+    document.body.appendChild(b);
+  }
+
+  // ---------- Konfetti ----------
+  const farger = ['#ff6fa5', '#a86fff', '#ffd166', '#4ecdc4', '#ff9770', '#e0aaff', '#fff'];
+  function slippKonfetti(antall) {
+    for (let i = 0; i < antall; i++) {
+      const k = document.createElement('div');
+      k.className = 'konfetti';
+      k.style.left = Math.random() * 100 + 'vw';
+      k.style.background = farger[Math.floor(Math.random() * farger.length)];
+      k.style.animationDuration = (2.5 + Math.random() * 2.5) + 's';
+      k.style.animationDelay = Math.random() * 0.8 + 's';
+      const form = Math.random();
+      if (form < 0.4) {
+        k.style.borderRadius = '50%';
+      } else if (form < 0.7) {
+        k.style.width = '6px';
+        k.style.height = '16px';
+      }
+      document.body.appendChild(k);
+      setTimeout(() => k.remove(), 6500);
+    }
+  }
+  slippKonfetti(80); // velkomstkonfetti
+
+  document.getElementById('festKnapp').addEventListener('click', () => slippKonfetti(120));
+
+  // ---------- Blås ut lysene ----------
+  const kake = document.getElementById('kake');
+  let slukket = false;
+  kake.addEventListener('click', () => {
+    if (slukket) return;
+    slukket = true;
+    document.querySelectorAll('.flamme').forEach((f, i) => {
+      setTimeout(() => f.classList.add('slukket'), i * 250);
+    });
+    setTimeout(() => {
+      document.getElementById('kakeHint').style.display = 'none';
+      document.getElementById('onske').style.display = 'block';
+      slippKonfetti(150);
+    }, 900);
+  });
+
+  // ---------- Hilsener glir inn ----------
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('synlig');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.2 });
+  document.querySelectorAll('.kort').forEach(k => observer.observe(k));
+</script>
+
+</body>
+</html>
